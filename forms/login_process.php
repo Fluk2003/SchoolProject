@@ -46,19 +46,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $sqlUserLogin->execute();
 
                 if ($sqlUserLogin->rowCount() > 0) {
+                    // Fetch user data
+                    $user = $sqlUserLogin->fetch(PDO::FETCH_ASSOC);
+
                     // Login successful – set the session and show success SweetAlert
                     $_SESSION["userName"] = $userName;
 
-                    echo "
-                    <script>
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'เข้าสู่ระบบสำเร็จ',
-                            text: 'ยินดีต้อนรับ $userName'
-                        }).then(() => {
-                            window.location.href = '../profile/index.php';
-                        });
-                    </script>";
+                    // Check user type and redirect
+                    if ($user['type'] == 'false') {
+                        // Redirect to student page
+                        echo "
+                        <script>
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'เข้าสู่ระบบสำเร็จ',
+                                text: 'ยินดีต้อนรับ $userName'
+                            }).then(() => {
+                                window.location.href = '../profile/student_page.php'; // Student page
+                            });
+                        </script>";
+                    } elseif ($user['type'] == 'true') {
+                        // Redirect to teacher page
+                        echo "
+                        <script>
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'เข้าสู่ระบบสำเร็จ',
+                                text: 'ยินดีต้อนรับ $userName'
+                            }).then(() => {
+                                window.location.href = '../profile/teacher_page.php'; // Teacher page
+                            });
+                        </script>";
+                    }
                     exit;
                 } else {
                     // Login failed – show an error SweetAlert
